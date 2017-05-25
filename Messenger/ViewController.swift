@@ -7,27 +7,44 @@
 //
 
 import UIKit
+import CoreData
+
 
 class FriendsController: UICollectionViewController,UICollectionViewDelegateFlowLayout{
 
     private let cellId = "cellId"
+    var messages = [Message]()   //[Message]()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "最近"
         collectionView?.backgroundColor = UIColor.white
         collectionView?.alwaysBounceVertical = true
-        collectionView?.register(FriendsCell.self, forCellWithReuseIdentifier: cellId)
+        collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellId)
+        
+        setupData()
         
         // Do any additional setup after loading the view, typically from a nib.
     }
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        var count:Int?=nil
+         count = messages.count
+            return count!
     }
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cellId = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath as IndexPath) as UICollectionViewCell
+        //let cellId = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath as IndexPath) as UICollectionViewCell
         
-        return cellId
+        //return cellId
         //swift3
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath as IndexPath)as! MessageCell
+        let message = messages[indexPath.item]
+            cell.message = message
+            return cell
+//        if let message = messages[indexPath.item]{
+//        cell.message = message
+//    }
+//    return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width:view.frame.width,height:100)  //swift3
@@ -36,7 +53,24 @@ class FriendsController: UICollectionViewController,UICollectionViewDelegateFlow
 
 
 }
-class FriendsCell: BaseCell {
+class MessageCell: BaseCell {
+    var message: Message?{
+        didSet{
+            nameLabel.text = message?.friend?.name
+            if let profileImageName = message?.friend?.profileImageName{
+                profileImageView.image = UIImage(named:profileImageName)
+                hasReadImageView.image = UIImage(named:profileImageName)
+            }
+            messageLabel.text = message?.text
+            
+            if let date = message?.date{
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "h:mm a"
+                timeLabel.text = dateFormatter.string(from: date as Date)
+            }
+            
+        }
+    }
     let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -124,9 +158,6 @@ class FriendsCell: BaseCell {
         
         addConstraintsWithFormat(format: "V:[v0(20)]|", views: hasReadImageView)
         
-        
-       
-        //addConstraints(<#T##constraints: [NSLayoutConstraint]##[NSLayoutConstraint]#>)
     }
 }
 
