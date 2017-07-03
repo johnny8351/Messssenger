@@ -21,7 +21,7 @@ class FriendsController: UICollectionViewController,UICollectionViewDelegateFlow
         navigationItem.title = "最近"
         collectionView?.backgroundColor = UIColor.white
         collectionView?.alwaysBounceVertical = true
-        collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellId)
+        collectionView?.register(MessageCell.self, forCellWithReuseIdentifier: cellId)   //.self
         
         setupData()
         
@@ -48,6 +48,13 @@ class FriendsController: UICollectionViewController,UICollectionViewDelegateFlow
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width:view.frame.width,height:100)  //swift3
+    }
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let layout = UICollectionViewLayout()
+        let controller = ChatLogController(collectionViewLayout: layout)
+        controller.friend = messages[indexPath.item].friend
+        navigationController?.pushViewController(controller, animated: true)
     }
  
 
@@ -182,7 +189,6 @@ class BaseCell: UICollectionViewCell{
         fatalError("init(coder:) has not been implemented")
     }
     func setupViews(){
-        backgroundColor = UIColor.gray
     }
 }
 
